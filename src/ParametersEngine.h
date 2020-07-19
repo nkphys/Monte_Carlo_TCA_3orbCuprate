@@ -20,6 +20,7 @@ public:
     double Disorder_Strength, RandomDisorderSeed;
     double Boltzman_constant;
     double BoundaryConnection;
+    Mat_1_doub Temp_values;
     bool Read_Seed_from_file_;
     string Seed_file_name_;
 //    bool J_Hund_InfinityLimit;
@@ -80,6 +81,8 @@ void Parameters::Initialize(string inputfile_)
     double Simple_Mixing_double;
     double ED_double;
     int SavingMicroscopicStates_int;
+    int no_of_temp_points;
+    string temp_values_;
     string temp_string;
 
     cout << "____________________________________" << endl;
@@ -244,6 +247,28 @@ void Parameters::Initialize(string inputfile_)
         d_Temp = double(matchstring(inputfile_, "dTemperature"));
         beta_max = double(Boltzman_constant / temp_min);
         beta_min = double(Boltzman_constant / temp_max);
+
+        no_of_temp_points = int( (( temp_max - temp_min )/(d_Temp)) + 1);
+        Temp_values.resize(no_of_temp_points);
+        for(int point_no=0;point_no<no_of_temp_points;point_no++){
+        Temp_values[point_no] = temp_min + (point_no*(d_Temp));
+        }
+
+    }
+    if (cooling_double == 2.0)
+    {
+        Cooling_ = true;
+        temp_values_ = matchstring2(inputfile_, "Temperature_Values");
+
+        stringstream temp_values_stream(temp_values_);
+        temp_values_stream>>no_of_temp_points;
+
+        Temp_values.resize(no_of_temp_points);
+
+        for(int point_no=0;point_no<no_of_temp_points;point_no++){
+        temp_values_stream >> Temp_values[point_no];
+        }
+
     }
     else if (cooling_double == 0.0)
     {
@@ -255,6 +280,9 @@ void Parameters::Initialize(string inputfile_)
         temp_min = temp;
         temp_max = temp;
         d_Temp = 10.0; //arbitrary positive number
+
+        Temp_values.resize(1);
+        Temp_values[0]=temp_min;
     }
     else
     {

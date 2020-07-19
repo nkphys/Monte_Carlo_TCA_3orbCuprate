@@ -75,9 +75,9 @@ void MCEngine::RUN_MC()
 
     //starting with a random guess
 
-    while (temp_ >= Parameters_.temp_min)
-    {
-
+    //while (temp_ >= Parameters_.temp_min)
+    for(int temp_point=0;temp_point<Parameters_.Temp_values.size();temp_point++){
+        temp_ = Parameters_.Temp_values[temp_point];
         cout << "Temperature = " << temp_ << " is being done" << endl;
         Parameters_.temp = temp_;
         Parameters_.beta = double(Parameters_.Boltzman_constant / temp_);

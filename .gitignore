@@ -1,1 +1,9 @@
 sf
+*.txt
+Disorder_conf_used
+Initial_MC_DOF_values
+Monte_Carlo_TCA_3orbCuprate.creator.user
+main.o
+Monte_Carlo_TCA_3orbCuprate.config
+Monte_Carlo_TCA_3orbCuprate.files
+Monte_Carlo_TCA_3orbCuprate.includes
