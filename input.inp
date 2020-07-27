@@ -1,14 +1,14 @@
 PBC=1
-Perform_ED=1
+Perform_ED=0
 Xsite=6
-Ysite=4
+Ysite=6
 N_Orbs=3
 ModelType=Cuprates
 TwistedBoundaryCond_mx=0
 TwistedBoundaryCond_my=0
 TBC_cellsX=32
 TBC_cellsY=32
-Fill=0.972222222
+Fill=0.83333333
 RandomSeed=22
 Fix_mu=0
 fixed_mu_value=-2.8
@@ -28,7 +28,7 @@ t_pd=-1.3
 t_pp=-0.65
 
 SavingMicroscopicStates=1
-NoOfMicroscopicStates=1
+NoOfMicroscopicStates=5
 
 Cooling=2
 Temperature_min=0.01
@@ -44,7 +44,7 @@ MaxMCsweeps=100
 Last_n_sweeps_for_measurement=10
 Measurement_after_each_m_sweeps=5
 
-Cluster_lx=8
+Cluster_lx=4
 Cluster_ly=4
 
 Monte_Carlo_variables=1 theta_and_phi

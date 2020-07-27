@@ -370,6 +370,8 @@ void MCEngine::RUN_MC()
                 /*********************/
                 if (ED_ == false)
                 {
+
+                 /* No diagonalization for Full system is done
                     //TCA is used
                     Parameters_.Dflag = 'V';
                     Hamiltonian_.InteractionsCreate();
@@ -378,6 +380,8 @@ void MCEngine::RUN_MC()
                     //n_states_occupied_zeroT=Parameters_.Fill*Hamiltonian_.eigsCluster_.size();
                     //initial_mu_guess=0.5*(Hamiltonian_.eigsCluster_[n_states_occupied_zeroT-1] + HamiltonianCluster_.eigs_[n_states_occupied_zeroT])
                     Parameters_.mus = Hamiltonian_.chemicalpotential(muu_prevCluster, Parameters_.Fill);
+                */
+
                 }
                 else
                 {
@@ -407,15 +411,12 @@ void MCEngine::RUN_MC()
                     //Observables_.calculate_quantum_SiSj();
                     //Observables_.quantum_SiSjQ_Average();
                     //Observables_.quantum_SiSj_Average();
-                    Observables_.calculate_local_density();
-                    Observables_.local_density_average();
+                    //Observables_.calculate_local_density();
+                    //Observables_.local_density_average();
 
                     //Just Classical Energy
                     Observables_.Total_Energy_Average(0.0, CurrE);
                     MFParams_.Calculate_Fields_Avg();
-
-
-                    int temp_site_;
 
                     if ((Parameters_.Saving_Microscopic_States == true) &&
                             (Confs_used < Parameters_.No_Of_Microscopic_States))
@@ -438,46 +439,9 @@ void MCEngine::RUN_MC()
                             }
                         }
 
-
-                        string File_Out_local_den_microState = "Local_den_Temp" + string(temp_char) +
-                                "MicroState" + string(Confs_char) + ".txt";
-                        ofstream File_Out_local_den_MicroState(File_Out_local_den_microState.c_str());
-
-                        File_Out_local_den_MicroState << "#x" << setw(15) << "y" << setw(15)<< "orb" << setw(15)<<"<n_up>" << setw(15)<< "<n_dn>"<<endl;
-
-                        for (int ix = 0; ix < lx_+1; ix++)
-                        {
-                            for (int iy = 0; iy < ly_+1; iy++)
-                            {
-                                for(int orb=0;orb<n_orbs_;orb++){
-                                    temp_site_ = Coordinates_.Nbasis(ix%lx_, iy%ly_, orb);
-                                    File_Out_local_den_MicroState << ix << setw(15) << iy << setw(15) << orb << setw(15) << Observables_.local_density[temp_site_][0]<<setw(15)
-                                                                  << Observables_.local_density[temp_site_][1] << endl;
-                                }
-                            }
-                            File_Out_local_den_MicroState<<endl;
-                        }
-
-
                     }
 
                     Confs_used = Confs_used + 1;
-
-
-                    double avg_filling = 0.0;
-
-                    for (int ix = 0; ix < lx_; ix++)
-                    {
-                        for (int iy = 0; iy < ly_; iy++)
-                        {
-                            for(int orb=0;orb<n_orbs_;orb++){
-                                temp_site_ = Coordinates_.Nbasis(ix, iy, orb);
-                                avg_filling += (Observables_.local_density_Mean[temp_site_][0] +
-                                        Observables_.local_density_Mean[temp_site_][1]) /
-                                        ((Confs_used * 1.0 * lx_ * ly_ * 2.0));
-                            }
-                        }
-                    }
 
                     //double MC_steps_Avg_insitu = (1.0 + 1.0*(count - (Parameters_.IterMax - MC_steps_used_for_Avg)));
 
@@ -514,20 +478,6 @@ void MCEngine::RUN_MC()
                                       << setw(16) << sqrt(((Observables_.SiSj_square_Mean(1, 0) / (Confs_used * 1.0)) - ((Observables_.SiSj_Mean(1, 0) * Observables_.SiSj_Mean(1, 0)) / (Confs_used * Confs_used * 1.0))))
 
                                       << setw(16) << sqrt(((Observables_.SiSj_square_Mean(0, 1) / (Confs_used * 1.0)) - ((Observables_.SiSj_Mean(0, 1) * Observables_.SiSj_Mean(0, 1)) / (Confs_used * Confs_used * 1.0))))
-
-                                         //   << setw(16) << Observables_.local_density_Mean[0][0] / (Confs_used * 1.0)
-
-                                         //   << setw(16) << sqrt(((Observables_.local_density_square_Mean[0][0] / (Confs_used * 1.0)) - ((Observables_.local_density_Mean[0][0] * Observables_.local_density_Mean[0][0]) / (Confs_used * Confs_used * 1.0))))
-
-                                         //   << setw(16) << Observables_.Nematic_order_mean_ / (Confs_used * 1.0)
-
-                                         //   << setw(16) << sqrt(((Observables_.Nematic_order_square_mean_ / (Confs_used * 1.0)) - ((Observables_.Nematic_order_mean_ * Observables_.Nematic_order_mean_) / (Confs_used * Confs_used * 1.0))))
-
-                                      << setw(32) << Observables_.AVG_Total_Energy / (Confs_used * 1.0)
-                                      << setw(16) << sqrt((Observables_.AVG_Total_Energy_sqr / (Confs_used * 1.0)) - ((Observables_.AVG_Total_Energy * Observables_.AVG_Total_Energy) / (Confs_used * Confs_used * 1.0)))
-                                      <<
-                                         //--------------------------
-                                         setw(16) << avg_filling
                                       << endl;
                 }
             }
@@ -547,24 +497,10 @@ void MCEngine::RUN_MC()
             }
         }
 
-        File_Out_Local_Density << "ix" << setw(15) << "iy" << setw(15) << "orb" << setw(15) << "<n_u(site)>" << setw(15) << "sd(n_u(site))" << setw(15) << "<n_d(site)>" << setw(15) << "std.dev(n_d(site))" << endl;
-        int temp_site_;
-        for (int ix = 0; ix < lx_+1; ix++)
-        {
-            for (int iy = 0; iy < ly_+1; iy++)
-            {
-                for(int orb=0;orb<n_orbs_;orb++){
-                    temp_site_ = Coordinates_.Nbasis(ix%lx_, iy%ly_, orb);
-
-                    File_Out_Local_Density << ix << setw(15) << iy << setw(15) << orb << setw(15) << Observables_.local_density_Mean[temp_site_][0] / (Confs_used * 1.0) << setw(15) << sqrt(((Observables_.local_density_square_Mean[temp_site_][0] / (Confs_used * 1.0)) - ((Observables_.local_density_Mean[temp_site_][0] * Observables_.local_density_Mean[temp_site_][0]) / (Confs_used * Confs_used * 1.0))))
-                            << setw(15) << Observables_.local_density_Mean[temp_site_][1] / (Confs_used * 1.0) << setw(15) << sqrt(((Observables_.local_density_square_Mean[temp_site_][1] / (Confs_used * 1.0)) - ((Observables_.local_density_Mean[temp_site_][1] * Observables_.local_density_Mean[temp_site_][1]) / (Confs_used * Confs_used * 1.0)))) << endl;
-                }
-            }
-            File_Out_Local_Density << endl;
-        }
 
         File_Out_Real_Space_Corr << "rx" << setw(15) << "ry" << setw(15) << "<SS(rx,ry)>" << setw(15) << "sd(SS(rx,ry))" << endl;
-        // int temp_site_;
+
+        int temp_site_;
         for (int ix = 0; ix < lx_; ix++)
         {
             for (int iy = 0; iy < ly_; iy++)
@@ -575,19 +511,6 @@ void MCEngine::RUN_MC()
             }
             File_Out_Real_Space_Corr << endl;
         }
-
-        //        File_Out_Quantum_Real_Space_Corr << "rx" << setw(15) << "ry" << setw(15) << "<qSS(rx,ry)>" << setw(15) << "sd(qSS(rx,ry))" << endl;
-        //        // int temp_site_;
-        //        for (int ix = 0; ix < lx_; ix++)
-        //        {
-        //            for (int iy = 0; iy < ly_; iy++)
-        //            {
-        //                temp_site_ = Coordinates_.Nc(ix, iy);
-        //                File_Out_Quantum_Real_Space_Corr << ix << setw(15) << iy << setw(15) << Observables_.quantum_SiSj_Mean_(ix, iy).real() / (Confs_used * 1.0)
-        //                                                 << setw(15) << sqrt(((Observables_.quantum_SiSj_square_Mean_(ix, iy).real() / (Confs_used * 1.0)) - ((Observables_.quantum_SiSj_Mean_(ix, iy) * Observables_.quantum_SiSj_Mean_(ix, iy)).real() / (Confs_used * Confs_used * 1.0)))) << endl;
-        //            }
-        //            File_Out_Quantum_Real_Space_Corr << endl;
-        //        }
 
         File_Out_Q_Space_Corr << "qx" << setw(15) << "qy" << setw(15) << "<SSQ(qx,qy)>" << setw(15) << "sd(SSQ(qx,qy))" << endl;
         // int temp_site_;
@@ -605,23 +528,6 @@ void MCEngine::RUN_MC()
             }
             File_Out_Q_Space_Corr << endl;
         }
-
-        //        File_Out_Quantum_Q_Space_Corr << "qx" << setw(15) << "qy" << setw(15) << "<QSSQ(qx,qy)>" << setw(15) << "sd(QSSQ(qx,qy))" << endl;
-        //        // int temp_site_;
-        //        // double qx, qy;
-        //        for (int ix = 0; ix < lx_; ix++)
-        //        {
-        //            for (int iy = 0; iy < ly_; iy++)
-        //            {
-        //                qx = 2 * 3.141593 * ix / (lx_ * 1.0);
-        //                qy = 2 * 3.141593 * iy / (ly_ * 1.0);
-
-        //                temp_site_ = Coordinates_.Nc(ix, iy);
-        //                File_Out_Quantum_Q_Space_Corr << qx << setw(15) << qy << setw(15) << Observables_.quantum_SiSjQ_Mean_(ix, iy).real() / (Confs_used * 1.0)
-        //                                              << setw(15) << sqrt(((Observables_.quantum_SiSjQ_square_Mean_(ix, iy).real() / (Confs_used * 1.0)) - ((Observables_.quantum_SiSjQ_Mean_(ix, iy) * Observables_.quantum_SiSjQ_Mean_(ix, iy)).real() / (Confs_used * Confs_used * 1.0)))) << endl;
-        //            }
-        //            File_Out_Quantum_Q_Space_Corr << endl;
-        //        }
 
         string File_Out_theta_phi_microState0_toread = "ThetaPhi_Temp" + string(temp_char) +
                 "MicroState0.txt";
